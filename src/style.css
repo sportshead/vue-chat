@@ -1,0 +1,26 @@
+@import url("https://f.sportshead.dev/fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url(material/theme.css);
+
+:root {
+    --md-ref-typeface-brand: "Roboto";
+    --md-ref-typeface-plain: "Roboto";
+
+    font-family: var(--md-ref-typeface-brand);
+}
+
+body {
+    text-align: center;
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+}
+
+a,
+a:visited {
+    color: var(--md-sys-color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--md-sys-color-on-primary-container);
+    text-decoration: underline;
+}
