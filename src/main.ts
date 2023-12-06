@@ -6,15 +6,15 @@ import {
     createWebHashHistory,
     type RouteRecordRaw,
 } from "vue-router";
-import HelloWorld from "./pages/HelloWorld.vue";
-import LoginPage from "./pages/LoginPage.vue";
-import ProfilePage from "./pages/ProfilePage.vue";
+import Home from "./pages/Home.vue";
+import Login from "./pages/Login.vue";
+import Profile from "./pages/Profile.vue";
 import { createPinia } from "pinia";
 
 const routes: Readonly<RouteRecordRaw[]> = [
-    { path: "/", component: HelloWorld },
-    { path: "/login", component: LoginPage },
-    { path: "/profile", component: ProfilePage },
+    { path: "/", component: Home },
+    { path: "/login", component: Login },
+    { path: "/profile", component: Profile },
 ];
 const router = createRouter({
     history: createWebHashHistory(),
