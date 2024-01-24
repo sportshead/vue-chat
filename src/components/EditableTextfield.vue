@@ -48,7 +48,7 @@ const handleCancel = () => {
 </script>
 
 <template>
-    <form @submit="handleSubmit">
+    <form @submit.prevent="handleSubmit">
         <md-outlined-text-field
             :style="inputStyle"
             :label="label"

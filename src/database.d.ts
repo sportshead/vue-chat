@@ -53,3 +53,5 @@ export interface Database {
         };
     };
 }
+
+export type MessageRow = Database["public"]["Tables"]["messages"]["Row"];

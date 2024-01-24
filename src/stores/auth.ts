@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { User, UserResponse } from "@supabase/supabase-js";
 import { useRouter } from "vue-router";
 import supabase from "../supabase.ts";
+import { useUserStore } from "./user.ts";
 
 export const useAuthStore = defineStore("auth", () => {
     const router = useRouter();
@@ -11,6 +12,7 @@ export const useAuthStore = defineStore("auth", () => {
     const username = ref("");
 
     const userData = ref<User>();
+    const userStore = useUserStore();
 
     const generateUsername = (username?: string): Promise<string> =>
         Promise.resolve(
@@ -46,9 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     supabase.auth.onAuthStateChange((event, session) => {
         switch (event) {
-            // @ts-expect-error intentional case fallthrough
             case "SIGNED_IN":
-                router.push("/profile");
             // @ts-expect-error intentional case fallthrough
             case "INITIAL_SESSION":
                 loggedIn.value = true;
@@ -57,6 +57,10 @@ export const useAuthStore = defineStore("auth", () => {
                 userData.value = session?.user;
                 if (session?.user?.user_metadata.username) {
                     username.value = session?.user.user_metadata.username;
+                    userStore.cache.set(
+                        session.user.id,
+                        session.user.user_metadata.username,
+                    );
                 } else if (session?.user) {
                     updateUsername(session?.user.email?.split("@")?.[0]);
                 }
@@ -75,6 +79,7 @@ export const useAuthStore = defineStore("auth", () => {
             console.log("got storage", e, e.newValue);
             supabase.auth.setSession(JSON.parse(e.newValue));
             window.focus();
+            router.push("/profile");
         }
     });
 

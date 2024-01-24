@@ -50,7 +50,7 @@ const submitHandler = () => {
     <div v-if="loading">
         <md-linear-progress indeterminate></md-linear-progress>
     </div>
-    <form v-else-if="sentTo === ''" @submit="submitHandler">
+    <form v-else-if="sentTo === ''" @submit.prevent="submitHandler">
         <md-outlined-text-field
             id="email"
             label="Email"
