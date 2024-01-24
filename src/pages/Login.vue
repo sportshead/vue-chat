@@ -6,6 +6,8 @@ import "@material/web/progress/linear-progress.js";
 import { type MdOutlinedTextField } from "@material/web/all";
 import { ref } from "vue";
 import supabase from "../supabase.ts";
+import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 
 const VITE_SUPABASE_EMAILS_FROM = import.meta.env.VITE_SUPABASE_EMAILS_FROM;
 
@@ -13,8 +15,7 @@ const sentTo = ref("");
 const errorMessage = ref("");
 const textField = ref<MdOutlinedTextField | null>(null);
 const loading = ref(false);
-const reportValidity = (e: Event) =>
-    (e.target as MdOutlinedTextField).reportValidity();
+const reportValidity = (e: Event) => (e.target as MdOutlinedTextField).reportValidity();
 
 const submitHandler = () => {
     const email = textField.value?.value;
@@ -42,6 +43,12 @@ const submitHandler = () => {
             }
         });
 };
+
+const router = useRouter();
+const authStore = useAuthStore();
+if (authStore.loggedIn) {
+    router.push("/");
+}
 </script>
 
 <template>
@@ -69,8 +76,7 @@ const submitHandler = () => {
     </form>
     <p v-else-if="errorMessage === ''">
         A link has been sent to <code>{{ sentTo }}</code
-        >. Check your inbox for mail from
-        <code>{{ VITE_SUPABASE_EMAILS_FROM }}</code
+        >. Check your inbox for mail from <code>{{ VITE_SUPABASE_EMAILS_FROM }}</code
         >.
     </p>
     <p v-else>An error occurred: {{ errorMessage }}</p>
@@ -80,6 +86,7 @@ const submitHandler = () => {
 form {
     text-align: left;
     display: inline-flex;
+    gap: 1em;
 }
 
 md-outlined-text-field {
@@ -90,7 +97,8 @@ md-outlined-text-field {
 md-filled-button {
     padding: 0 1em;
     position: relative;
-    top: 8px;
+    top: 0;
+    max-height: 56px;
 }
 
 md-linear-progress {
