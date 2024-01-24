@@ -6,13 +6,13 @@ settings:
 
 patchedDependencies:
   '@material/web@1.1.2-nightly.044ee51.0':
-    hash: yqpigrc7yrsy5xlrwxyjh7xhyu
+    hash: fb2rrcsym5hbk53yg3urcss5su
     path: patches/@material__web@1.1.2-nightly.044ee51.0.patch
 
 dependencies:
   '@material/web':
     specifier: nightly
-    version: 1.1.2-nightly.044ee51.0(patch_hash=yqpigrc7yrsy5xlrwxyjh7xhyu)
+    version: 1.1.2-nightly.044ee51.0(patch_hash=fb2rrcsym5hbk53yg3urcss5su)
   '@supabase/supabase-js':
     specifier: ^2.39.0
     version: 2.39.0
@@ -288,7 +288,7 @@ packages:
       '@lit-labs/ssr-dom-shim': 1.1.2
     dev: false
 
-  /@material/web@1.1.2-nightly.044ee51.0(patch_hash=yqpigrc7yrsy5xlrwxyjh7xhyu):
+  /@material/web@1.1.2-nightly.044ee51.0(patch_hash=fb2rrcsym5hbk53yg3urcss5su):
     resolution: {integrity: sha512-gjKulPUVaLOMuxz99mlzxB/E/Q7rFBbGLwDbja1/yLqgFJo5amPHsaPyJ6eHaJlW7n4gQlWkGHM6phXN94wU9A==}
     dependencies:
       lit: 3.1.0
