@@ -10,6 +10,7 @@ import { useUserStore } from "../stores/user.ts";
 import { useAuthStore } from "../stores/auth";
 import type { MdDialog } from "@material/web/all";
 import supabase from "../supabase";
+import { useDateFormat } from "@vueuse/core";
 
 const props = defineProps<{
     message: MessageRow;
@@ -19,27 +20,8 @@ const authStore = useAuthStore();
 
 const username = ref<string>("unknown user");
 
-const formatValue = (value: number) => value.toString().padStart(2, "0");
-const prettyDate = computed(() => {
-    const d = new Date(props.message.created_at);
-    return (
-        d.getFullYear() +
-        "-" +
-        formatValue(d.getMonth() + 1) +
-        "-" +
-        formatValue(d.getDate()) +
-        " " +
-        formatValue(d.getHours()) +
-        ":" +
-        formatValue(d.getMinutes()) +
-        ":" +
-        formatValue(d.getSeconds())
-    );
-});
-const prettyTime = computed(() => {
-    const d = new Date(props.message.created_at);
-    return formatValue(d.getHours()) + ":" + formatValue(d.getMinutes());
-});
+const prettyDate = useDateFormat(props.message.created_at, "YYYY-MM-DD HH:mm:ss");
+const prettyTime = useDateFormat(props.message.created_at, "HH:mm");
 
 userStore.getUsername(props.message.author).then((u) => {
     if (u) {
@@ -140,6 +122,8 @@ div.message-toolbar {
 
     right: 1vw;
     display: none;
+
+    z-index: 2;
 }
 
 div.message-wrapper:hover > div.message-toolbar {

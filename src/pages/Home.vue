@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import supabase from "../supabase.ts";
 import { useAuthStore } from "../stores/auth.ts";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import getPlaceholder from "../placeholders.ts";
 import type { MdOutlinedTextField } from "@material/web/all";
 import type { MessageRow } from "../database";
 import Message from "../components/Message.vue";
+import { formatDate } from "@vueuse/core";
 
 const auth = useAuthStore();
 
@@ -73,15 +74,56 @@ const handleSendMessage = () => {
             } else {
                 messages.value.push(...data);
                 messageField.value?.reset();
+
+                // wait for new element to be added to body
+                setTimeout(
+                    () =>
+                        // https://stackoverflow.com/a/58109049
+                        window.scrollTo({
+                            left: 0,
+                            top: document.body.scrollHeight,
+                            behavior: "smooth",
+                        }),
+                    10,
+                );
             }
         });
     placeholder.value = getPlaceholder();
 };
+
+interface Day {
+    date: string;
+    messages: MessageRow[];
+}
+const messageDays = computed(() => {
+    const days: Day[] = [];
+
+    for (const message of messages.value) {
+        const date = formatDate(new Date(message.created_at), "YYYY-MM-DD");
+        if (days.length) {
+            const lastDay = days[days.length - 1];
+            if (lastDay.date === date) {
+                lastDay.messages.push(message);
+                continue;
+            }
+        }
+
+        days.push({
+            date,
+            messages: [message],
+        });
+    }
+
+    return days;
+});
 </script>
 
 <template>
-    <div>
-        <Message v-for="message in messages" :key="message.id" :message="message" />
+    <div class="message-container">
+        <template v-for="day in messageDays">
+            <h4 class="date">{{ day.date }}</h4>
+            <Message v-for="message in day.messages" :key="message.id" :message="message" />
+        </template>
     </div>
     <form @submit="handleSendMessage">
         <md-outlined-text-field
@@ -98,13 +140,21 @@ const handleSendMessage = () => {
 </template>
 
 <style scoped>
+div.message-container {
+    margin-bottom: 80px;
+}
+
 form {
     text-align: left;
     position: fixed;
-    bottom: 0.5rem;
+    bottom: 0;
+    left: 0;
+
+    padding: 0.75rem 15px;
     display: flex;
-    width: calc(100vw - 20px);
+    width: calc(100vw - 30px);
     gap: 1em;
+    background-color: var(--md-sys-color-background);
 }
 
 md-outlined-text-field {
@@ -117,5 +167,26 @@ md-filled-icon-button {
 
 div {
     text-align: left;
+}
+
+h4.date {
+    font-style: italic;
+    text-align: center;
+    margin: 1em;
+    padding: 0 0.25em;
+    background-color: var(--md-sys-color-background);
+    display: inline-block;
+}
+
+h4.date::after {
+    border-top: 1px solid var(--md-sys-color-outline);
+    height: 1px;
+    width: 100vw;
+    display: block;
+    position: absolute;
+    left: 0;
+    content: "";
+    z-index: -1;
+    transform: translateY(-10px);
 }
 </style>
