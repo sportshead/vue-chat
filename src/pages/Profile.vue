@@ -61,8 +61,7 @@ const prettyDate = (date: string) =>
             <code>{{ auth.userData!.email }}</code> and
             <code>{{ auth.userData!.new_email }}</code> at
             <code>{{ prettyDate(auth.userData!.email_change_sent_at!) }}</code
-            >. Check your inbox for mail from
-            <code>{{ VITE_SUPABASE_EMAILS_FROM }}</code
+            >. Check your inbox for mail from <code>{{ VITE_SUPABASE_EMAILS_FROM }}</code
             >.
         </p>
     </div>
@@ -91,9 +90,7 @@ const prettyDate = (date: string) =>
         @submit="handleUsernameSubmit"
         input-style="width: 40vw; min-width: 250px"
         placeholder="Leave blank for 🎲"
-        :supporting-text="
-            usernameSuccess ? `Updated username to ${auth.username}` : ``
-        "
+        :supporting-text="usernameSuccess ? `Updated username to ${auth.username}` : ``"
         :error="!!usernameError"
         :error-text="usernameError"
     />
@@ -111,8 +108,7 @@ div {
     align-items: center;
     flex-direction: column;
     height: calc(
-        var(--md-outlined-field-top-space, 16px) +
-            var(--md-outlined-field-bottom-space, 16px) +
+        var(--md-outlined-field-top-space, 16px) + var(--md-outlined-field-bottom-space, 16px) +
             var(
                 --md-outlined-field-content-line-height,
                 var(--md-sys-typescale-body-large-line-height, 1.5rem)

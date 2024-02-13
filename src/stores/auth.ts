@@ -16,10 +16,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     const generateUsername = (username?: string): Promise<string> =>
         Promise.resolve(
-            username ||
-                import("../auth/randomUsername.ts").then((pkg) =>
-                    pkg.default(),
-                ),
+            username || import("../auth/randomUsername.ts").then((pkg) => pkg.default()),
         );
 
     const updateUsername = (username?: string): Promise<UserResponse> =>
@@ -33,11 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
             )
             .then(
                 (res) => (
-                    console.log(
-                        "updated username",
-                        res.data?.user?.user_metadata.username,
-                    ),
-                    res
+                    console.log("updated username", res.data?.user?.user_metadata.username), res
                 ),
             );
 
@@ -57,10 +50,7 @@ export const useAuthStore = defineStore("auth", () => {
                 userData.value = session?.user;
                 if (session?.user?.user_metadata.username) {
                     username.value = session?.user.user_metadata.username;
-                    userStore.cache.set(
-                        session.user.id,
-                        session.user.user_metadata.username,
-                    );
+                    userStore.cache.set(session.user.id, session.user.user_metadata.username);
                 } else if (session?.user) {
                     updateUsername(session?.user.email?.split("@")?.[0]);
                 }

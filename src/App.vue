@@ -10,9 +10,7 @@ const auth = useAuthStore();
             <router-link to="/">Vue Chat</router-link>
         </h1>
         <h3>
-            <router-link to="/profile" v-if="auth.loggedIn">{{
-                auth.username
-            }}</router-link>
+            <router-link to="/profile" v-if="auth.loggedIn">{{ auth.username }}</router-link>
             <router-link to="/login" v-else>Login</router-link>
         </h3>
     </nav>

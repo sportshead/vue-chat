@@ -4,10 +4,7 @@ import "@material/web/icon/icon.js";
 import "@material/web/iconbutton/filled-icon-button.js";
 import "@material/web/iconbutton/filled-tonal-icon-button.js";
 import { ref } from "vue";
-import type {
-    MdFilledIconButton,
-    MdOutlinedTextField,
-} from "@material/web/all";
+import type { MdFilledIconButton, MdOutlinedTextField } from "@material/web/all";
 
 const emit = defineEmits<{
     (e: "submit", value: string): void;
@@ -61,20 +58,11 @@ const handleCancel = () => {
         >
             <md-icon slot="leading-icon" v-if="icon">{{ icon }}}</md-icon>
         </md-outlined-text-field>
-        <md-filled-icon-button
-            toggle
-            :selected="!readonly"
-            @click="handleClick"
-            type="button"
-        >
+        <md-filled-icon-button toggle :selected="!readonly" @click="handleClick" type="button">
             <md-icon>edit</md-icon>
             <md-icon slot="selected">check</md-icon>
         </md-filled-icon-button>
-        <md-filled-tonal-icon-button
-            v-if="!readonly"
-            @click="handleCancel"
-            type="button"
-        >
+        <md-filled-tonal-icon-button v-if="!readonly" @click="handleCancel" type="button">
             <md-icon>close</md-icon>
         </md-filled-tonal-icon-button>
         <input type="submit" style="display: none" />
@@ -98,8 +86,6 @@ md-filled-icon-button {
 md-filled-tonal-icon-button {
     position: absolute;
     top: 8px;
-    right: calc(
-        (var(--md-filled-icon-button-container-width, 40px) + 1em) * -1
-    );
+    right: calc((var(--md-filled-icon-button-container-width, 40px) + 1em) * -1);
 }
 </style>

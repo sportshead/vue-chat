@@ -11,20 +11,14 @@ import {
 // 15 mins
 const CACHE_TTL = 15 * 60 * 1000;
 export const useUserStore = defineStore("user", () => {
-    const cache = useLocalStorage(
-        "vue-chat-usercache",
-        ref(new Map<string, [number, string]>()),
-    );
+    const cache = useLocalStorage("vue-chat-usercache", ref(new Map<string, [number, string]>()));
 
     const usernamePromises: Map<string, Promise<string>> = new Map();
 
     const _getUsername = async (userId: string): Promise<string> => {
-        const { data, error } = await supabase.functions.invoke(
-            "metadata-server",
-            {
-                body: { user: userId },
-            },
-        );
+        const { data, error } = await supabase.functions.invoke("metadata-server", {
+            body: { user: userId },
+        });
         if (error) {
             if (error instanceof FunctionsHttpError) {
                 const errorMessage = await error.context.json();
@@ -38,10 +32,7 @@ export const useUserStore = defineStore("user", () => {
             }
         }
 
-        cache.value.set(userId, [
-            new Date().getTime() + CACHE_TTL,
-            data.username,
-        ]);
+        cache.value.set(userId, [new Date().getTime() + CACHE_TTL, data.username]);
         return data.username;
     };
 
