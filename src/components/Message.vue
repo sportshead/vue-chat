@@ -8,7 +8,7 @@ import type { MessageRow } from "../database";
 import { computed, ref } from "vue";
 import { useUserStore } from "../stores/user.ts";
 import { useAuthStore } from "../stores/auth";
-import type { MdDialog } from "@material/web/all";
+import { MdOutlinedTextField, type MdDialog } from "@material/web/all";
 import supabase from "../supabase";
 import { useDateFormat } from "@vueuse/core";
 
@@ -31,11 +31,11 @@ userStore.getUsername(props.message.author).then((u) => {
 
 const messageAuthor = computed(() => props.message.author === authStore.userData?.id);
 
-const dialog = ref<MdDialog>();
-const dialogId = computed(() => `dialog-${props.message.id}`);
+const deleteDialog = ref<MdDialog>();
+const deleteDialogId = computed(() => `delete-${props.message.id}`);
 
-const handleClose = () => {
-    if (dialog.value?.returnValue === "delete") {
+const handleDelete = () => {
+    if (deleteDialog.value?.returnValue === "delete") {
         supabase
             .from("messages")
             .delete()
@@ -48,12 +48,45 @@ const handleClose = () => {
             });
     }
 };
+
+const editDialog = ref<MdDialog>();
+const editDialogId = computed(() => `edit-${props.message.id}`);
+
+const editValue = ref(props.message.message);
+const editTextField = ref<MdOutlinedTextField>();
+
+const handleEdit = () => {
+    if (editDialog.value?.returnValue === "edit") {
+        supabase
+            .from("messages")
+            .update({ message: editValue.value })
+            .eq("id", props.message.id)
+            .select()
+            .then(({ error, data }) => {
+                if (error) {
+                    console.error(error);
+                    alert(`Error attempting to edit message: ${error.message}`);
+                } else {
+                    console.log(data);
+                }
+            });
+    } else {
+        editValue.value = props.message.message;
+    }
+};
+
+const handleEditChange = () => {
+    editValue.value = editTextField.value!.value;
+};
 </script>
 
 <template>
     <div class="message-wrapper" :title="prettyDate">
         <div v-if="messageAuthor" class="message-toolbar">
-            <md-filled-tonal-icon-button @click="() => dialog?.show()">
+            <md-filled-tonal-icon-button @click="() => editDialog?.show()">
+                <md-icon>edit</md-icon>
+            </md-filled-tonal-icon-button>
+            <md-filled-tonal-icon-button @click="() => deleteDialog?.show()">
                 <md-icon>delete</md-icon>
             </md-filled-tonal-icon-button>
         </div>
@@ -63,10 +96,10 @@ const handleClose = () => {
         </div>
         <span class="message">{{ props.message.message }}</span>
     </div>
-    <md-dialog ref="dialog" @closed="handleClose">
+    <md-dialog ref="deleteDialog" @closed="handleDelete">
         <div slot="headline">Delete Message</div>
         <md-icon slot="icon">delete</md-icon>
-        <form :id="dialogId" slot="content" method="dialog" ref="dialogForm">
+        <form :id="deleteDialogId" slot="content" method="dialog">
             <div>Are you sure you want to delete this message?</div>
             <div class="dialog-message-wrapper" :title="prettyDate">
                 <div class="message-header">
@@ -77,8 +110,30 @@ const handleClose = () => {
             </div>
         </form>
         <div slot="actions">
-            <md-text-button :form="dialogId" value="cancel">Cancel</md-text-button>
-            <md-filled-button :form="dialogId" value="delete" autofocus>Delete</md-filled-button>
+            <md-text-button :form="deleteDialogId" value="cancel">Cancel</md-text-button>
+            <md-filled-button :form="deleteDialogId" value="delete" autofocus
+                >Delete</md-filled-button
+            >
+        </div>
+    </md-dialog>
+    <md-dialog
+        ref="editDialog"
+        @closed="handleEdit"
+        @cancel.prevent="() => editDialog?.close('cancel')"
+    >
+        <div slot="headline">Edit Message</div>
+        <md-icon slot="icon">edit</md-icon>
+        <form :id="editDialogId" slot="content" method="dialog">
+            <md-outlined-text-field
+                :value="editValue"
+                ref="editTextField"
+                @change="handleEditChange"
+                @keydown.enter="() => editDialog?.close('edit')"
+            ></md-outlined-text-field>
+        </form>
+        <div slot="actions">
+            <md-text-button :form="editDialogId" value="cancel">Cancel</md-text-button>
+            <md-filled-button :form="editDialogId" value="edit" autofocus>Edit</md-filled-button>
         </div>
     </md-dialog>
 </template>
@@ -128,6 +183,10 @@ div.message-toolbar {
 
 div.message-wrapper:hover > div.message-toolbar {
     display: block;
+}
+
+div.message-toolbar > md-filled-tonal-icon-button {
+    padding: 2px;
 }
 
 md-dialog {

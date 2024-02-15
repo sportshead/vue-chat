@@ -46,13 +46,18 @@ supabase
 supabase
     .from("messages")
     .select("*")
+    .order("created_at", { ascending: false })
     .limit(50)
     .then(({ data, error }) => {
         if (error) {
             console.error(error);
             alert(`Error attempting to fetch messages: ${error.message}`);
         } else {
-            messages.value.unshift(...data);
+            messages.value.unshift(
+                ...data.sort(
+                    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+                ),
+            );
         }
     });
 
