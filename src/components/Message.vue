@@ -23,6 +23,12 @@ const username = ref<string>("unknown user");
 const prettyDate = useDateFormat(props.message.created_at, "YYYY-MM-DD HH:mm:ss");
 const prettyTime = useDateFormat(props.message.created_at, "HH:mm");
 
+const editedDate = computed(() => {
+    // reference so that vue recognises the dependency
+    const msg = props.message;
+    return useDateFormat(msg.edited_at ?? "", "YYYY-MM-DD HH:mm:ss").value;
+});
+
 userStore.getUsername(props.message.author).then((u) => {
     if (u) {
         username.value = u;
@@ -59,7 +65,7 @@ const handleEdit = () => {
     if (editDialog.value?.returnValue === "edit") {
         supabase
             .from("messages")
-            .update({ message: editValue.value })
+            .update({ message: editValue.value, edited_at: new Date().toISOString() })
             .eq("id", props.message.id)
             .select()
             .then(({ error, data }) => {
@@ -95,6 +101,7 @@ const handleEditChange = () => {
             <span class="username">{{ username }}</span>
         </div>
         <span class="message">{{ props.message.message }}</span>
+        <span class="edited" v-if="props.message.edited_at" :title="editedDate">(edited)</span>
     </div>
     <md-dialog ref="deleteDialog" @closed="handleDelete">
         <div slot="headline">Delete Message</div>
@@ -107,6 +114,9 @@ const handleEditChange = () => {
                     <span class="username">{{ username }}</span>
                 </div>
                 <span class="message">{{ props.message.message }}</span>
+                <span class="edited" v-if="props.message.edited_at" :title="editedDate"
+                    >(edited)</span
+                >
             </div>
         </form>
         <div slot="actions">
@@ -154,10 +164,12 @@ span {
     margin: 0 2px;
 }
 
-span.time {
+span.time,
+span.edited {
     color: var(--md-sys-color-outline);
     font-size: 0.7em;
     vertical-align: middle;
+    user-select: none;
 }
 
 span.username {
